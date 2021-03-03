@@ -86,6 +86,33 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     _map(mapId).updateCircles(circleUpdates);
   }
 
+  /// Updates tile overlay configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> updateTileOverlays({
+    Set<TileOverlay> newTileOverlays,
+    @required int mapId,
+  }) async {
+    // throw UnimplementedError('updateTileOverlays() has not been implemented.');
+  }
+
+  /// Clears the tile cache so that all tiles will be requested again from the
+  /// [TileProvider].
+  ///
+  /// The current tiles from this tile overlay will also be
+  /// cleared from the map after calling this method. The Google Maps SDK maintains a small
+  /// in-memory cache of tiles. If you want to cache tiles for longer, you
+  /// should implement an on-disk cache.
+  Future<void> clearTileCache(
+    TileOverlayId tileOverlayId, {
+    @required int mapId,
+  }) async {
+    // throw UnimplementedError('clearTileCache() has not been implemented.');
+  }
+
   /// Applies the given `cameraUpdate` to the current viewport (with animation).
   @override
   Future<void> animateCamera(
@@ -260,21 +287,10 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
 
   @override
   Widget buildView(
-    int creationId,
-    PlatformViewCreatedCallback onPlatformViewCreated, {
-    @required CameraPosition initialCameraPosition,
-    Set<Marker> markers = const <Marker>{},
-    Set<Polygon> polygons = const <Polygon>{},
-    Set<Polyline> polylines = const <Polyline>{},
-    Set<Circle> circles = const <Circle>{},
-    Set<TileOverlay> tileOverlays = const <TileOverlay>{},
-    Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers =
-        const <Factory<OneSequenceGestureRecognizer>>{},
-    // TODO: Replace with a structured type that's part of the interface.
-    // See https://github.com/flutter/flutter/issues/70330.
-    Map<String, dynamic> mapOptions = const <String, dynamic>{},
-  }) {
-    int mapId = mapOptions.remove('_webOnlyMapCreationId');
+      Map<String, dynamic> creationParams,
+      Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers,
+      PlatformViewCreatedCallback onPlatformViewCreated) {
+    int mapId = creationParams.remove('_webOnlyMapCreationId');
 
     assert(mapId != null,
         'buildView needs a `_webOnlyMapCreationId` in its creationParams to prevent widget reloads in web.');
@@ -290,7 +306,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     final mapController = GoogleMapController(
       mapId: mapId,
       streamController: controller,
-      rawOptions: mapOptions,
+      rawOptions: creationParams,
     );
 
     _mapById[mapId] = mapController;
